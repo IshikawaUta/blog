@@ -15,7 +15,11 @@ Jekyll adalah generator situs statis (SSG) berbasis **Ruby**. Karena berbasis Ru
 
 macOS biasanya sudah memiliki Ruby, namun disarankan menggunakan versi terbaru via **Homebrew**.
 
-1. Install Homebrew (jika belum): `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+1. Install Homebrew (jika belum):
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
 2. Install Ruby: `brew install ruby`
 3. Update PATH di shell profil kamu (`.zshrc` atau `.bash_profile`):
 
