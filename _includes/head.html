@@ -8,9 +8,91 @@
   
   <link rel="shortcut icon" type="image/png" href="https://img.icons8.com/?size=100&id=UmF1v-dFKf1k&format=png&color=000000">
   <link href="https://fonts.googleapis.com" rel="stylesheet">
+  
   <style>
     body {
       font-family: 'times', sans-serif;
     }
+
+    /* Styling Tombol Copy */
+    .code-wrapper {
+      position: relative;
+      margin-bottom: 1.5em;
+    }
+    
+    .btn-copy {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: bold;
+      color: #ffffff;
+      background-color: #333333;
+      border: 1px solid #555555;
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: all 0.2s ease;
+      z-index: 10;
+      text-transform: uppercase;
+    }
+
+    .btn-copy:hover {
+      opacity: 1;
+      background-color: #000000;
+      border-color: #eeeeee;
+    }
+
+    .btn-copy:active {
+      transform: scale(0.95);
+    }
   </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mencari semua blok kode yang dihasilkan Jekyll
+      // Biasanya berbentuk <figure class="highlight"> atau <pre>
+      var codeBlocks = document.querySelectorAll('div.highlight, figure.highlight, pre');
+
+      codeBlocks.forEach(function(block, index) {
+        // Cari elemen code di dalamnya
+        var codeElement = block.querySelector('code') || block;
+        var id = 'code-block-' + index;
+        codeElement.setAttribute('id', id);
+
+        // Buat Tombol
+        var button = document.createElement('button');
+        button.className = 'btn-copy';
+        button.type = 'button';
+        button.innerText = 'Copy';
+        button.setAttribute('data-clipboard-target', '#' + id);
+
+        // Bungkus blok kode dengan wrapper untuk posisi absolut tombol
+        var wrapper = document.createElement('div');
+        wrapper.className = 'code-wrapper';
+        block.parentNode.insertBefore(wrapper, block);
+        wrapper.appendChild(block);
+        wrapper.appendChild(button);
+      });
+
+      // Inisialisasi Clipboard.js
+      var clipboard = new ClipboardJS('.btn-copy');
+
+      // Feedback saat berhasil copy
+      clipboard.on('success', function(e) {
+        var originalText = e.trigger.innerText;
+        e.trigger.innerText = 'Copied!';
+        e.trigger.style.backgroundColor = '#28a745'; // Warna hijau saat sukses
+        e.clearSelection();
+        
+        setTimeout(function() {
+          e.trigger.innerText = originalText;
+          e.trigger.style.backgroundColor = '';
+        }, 2000);
+      });
+    });
+  </script>
 </head>
