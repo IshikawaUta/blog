@@ -14,18 +14,19 @@
       font-family: 'times', sans-serif;
     }
 
-    /* Styling Tombol Copy */
+    /* Container untuk membungkus kode dan tombol */
     .code-wrapper {
       position: relative;
       margin-bottom: 1.5em;
     }
     
+    /* Style Tombol Copy */
     .btn-copy {
       position: absolute;
       top: 8px;
       right: 8px;
-      padding: 4px 10px;
-      font-size: 11px;
+      padding: 5px 12px;
+      font-size: 10px;
       font-weight: bold;
       color: #ffffff;
       background-color: #333333;
@@ -36,12 +37,13 @@
       transition: all 0.2s ease;
       z-index: 10;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .btn-copy:hover {
       opacity: 1;
       background-color: #000000;
-      border-color: #eeeeee;
+      border-color: #ffffff;
     }
 
     .btn-copy:active {
@@ -53,45 +55,57 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Mencari semua blok kode yang dihasilkan Jekyll
-      // Biasanya berbentuk <figure class="highlight"> atau <pre>
+      // 1. Ambil semua blok kode (Jekyll biasanya pakai figure.highlight atau div.highlight)
       var codeBlocks = document.querySelectorAll('div.highlight, figure.highlight, pre');
 
-      codeBlocks.forEach(function(block, index) {
-        // Cari elemen code di dalamnya
-        var codeElement = block.querySelector('code') || block;
-        var id = 'code-block-' + index;
-        codeElement.setAttribute('id', id);
+      codeBlocks.forEach(function(block) {
+        // Cari elemen <code> di dalam blok tersebut
+        var codeElement = block.querySelector('code');
+        if (!codeElement) return; // Jika tidak ada <code>, lewati
 
-        // Buat Tombol
+        // 2. Buat elemen Button secara dinamis
         var button = document.createElement('button');
         button.className = 'btn-copy';
         button.type = 'button';
         button.innerText = 'Copy';
-        button.setAttribute('data-clipboard-target', '#' + id);
 
-        // Bungkus blok kode dengan wrapper untuk posisi absolut tombol
+        // 3. Bungkus blok kode dengan .code-wrapper agar posisi tombol absolut bisa menempel
         var wrapper = document.createElement('div');
         wrapper.className = 'code-wrapper';
         block.parentNode.insertBefore(wrapper, block);
         wrapper.appendChild(block);
         wrapper.appendChild(button);
-      });
 
-      // Inisialisasi Clipboard.js
-      var clipboard = new ClipboardJS('.btn-copy');
+        // 4. Inisialisasi Clipboard.js khusus untuk tombol ini
+        var clipboard = new ClipboardJS(button, {
+          text: function() {
+            // Mengambil teks murni dari elemen <code>
+            return codeElement.innerText;
+          }
+        });
 
-      // Feedback saat berhasil copy
-      clipboard.on('success', function(e) {
-        var originalText = e.trigger.innerText;
-        e.trigger.innerText = 'Copied!';
-        e.trigger.style.backgroundColor = '#28a745'; // Warna hijau saat sukses
-        e.clearSelection();
-        
-        setTimeout(function() {
-          e.trigger.innerText = originalText;
-          e.trigger.style.backgroundColor = '';
-        }, 2000);
+        // 5. Feedback visual setelah berhasil copy
+        clipboard.on('success', function(e) {
+          var originalText = button.innerText;
+          button.innerText = 'Copied!';
+          button.style.backgroundColor = '#28a745'; // Berubah hijau
+          button.style.color = '#ffffff';
+          
+          e.clearSelection();
+          
+          setTimeout(function() {
+            button.innerText = originalText;
+            button.style.backgroundColor = '';
+            button.style.color = '';
+          }, 2000);
+        });
+
+        clipboard.on('error', function(e) {
+          button.innerText = 'Error';
+          setTimeout(function() {
+            button.innerText = 'Copy';
+          }, 2000);
+        });
       });
     });
   </script>
